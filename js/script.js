@@ -5,7 +5,7 @@ const input = document.querySelector('#input'), // input/output button
   operators = document.querySelectorAll('.operators div'), // operator buttons
   result = document.querySelector('#result'), // equal button
   clear = document.querySelector('#clear'), // clear button
-  operatorsSymbols = ['*','-','+','/','.'];
+  operatorsSymbols = ['*','-','+','/'];
 
 let resultDisplayed = false; // flag to keep an eye on what output is displayed
 let calculateArray = [];
@@ -17,19 +17,18 @@ function addEventListenerToNodelist(nodelist){
         input.innerHTML = '';
         resultDisplayed = false;
       }
-      console.log(`${node.innerText} Clicked!`)
-      if (node.innerText === 'C'){
-        input.innerHTML = '';
-        console.log(input.innerHTML);
-      } 
-      else if (operatorsSymbols.includes(node.innerText)){
-        addOperatorInput(node.innerText);
-      }
-      // else if (node.innerHTML === '.'){
-      //   addDecimalInput(node.innerHTML);
-      // }
-      else {
-        input.innerHTML += node.innerText;
+      switch (true){
+        case node.innerText === 'C':
+          input.innerHTML = '';
+          break;
+        case operatorsSymbols.includes(node.innerText):
+          addOperatorInput(node.innerText);
+          break;
+        case node.innerHTML === '.':
+          addDecimalInput(node.innerHTML);
+          break;
+        default:
+          input.innerHTML += node.innerText;
       }
     })
     })
@@ -48,13 +47,32 @@ function addOperatorInput(operator){
     }
 }
 
-// function addDecimalInput(decimal){
-  
-// }
+function addDecimalInput(decimal){
+  let lastOperatorIndex = 0
+  let lastDecimalIndex = 0
+  for (let i = 0; i < input.innerText.length; i++){
+    if (operatorsSymbols.includes(input.innerHTML[i])){
+      lastOperatorIndex = i;
+    }
+    if (input.innerHTML[i] === '.'){
+      lastDecimalIndex = i;
+    }
+  }
+  switch (true){
+    case input.innerHTML[0] === undefined:
+    case operatorsSymbols.includes(input.innerHTML[input.innerHTML.length - 1]):
+      input.innerHTML += '0.'
+    case input.innerHTML[input.innerHTML.length - 1] === decimal:
+      break;
+    case lastDecimalIndex > lastOperatorIndex:
+      break;
+    default:
+      input.innerHTML += decimal;
+  }
+}
  
 function addEventListenerToResult(result){
   result.addEventListener('click', function(event){
-    console.log(`${result} clicked`);
     const inputString = input.innerHTML;
     let numberArray = inputString.split(/\+|\-|\*|\//g);
     let operatorsArray = inputString.replace(/[0-9]|\./g, '').split('');
